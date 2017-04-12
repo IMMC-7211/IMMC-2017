@@ -40,7 +40,7 @@ API_KEY = "su293493194092138670806993660989"
 		
 def get_flight_prices(num):
 	year, month, day = num_to_day(num)
-	link = "http://partners.api.skyscanner.net/apiservices/browsequotes/v1.0/US/USD/en-US/LAX/NRT/"+year+"-"+month+"-"+day+"?apiKey=" + API_KEY
+	link = "http://partners.api.skyscanner.net/apiservices/browsequotes/v1.0/US/USD/en-US/JFK/LHR/"+year+"-"+month+"-"+day+"?apiKey=" + API_KEY
 	r = requests.get(link)
 	data = json.loads(r.text)
 	prices = []
@@ -57,7 +57,7 @@ for i in range(102, 467):
 	except:
 		print("error")
 
-file = open("flightdata.txt", "w")
+file = open("JFKtoLHR.txt", "w")
 file.write(json.dumps(price_list))
 file.close()
 	
