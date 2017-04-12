@@ -16,3 +16,12 @@ def lat_long_to_vector(lat, long):
 def rad(deg):
 	return math.pi*(deg/180)
 
+lat1 = 40.7128
+long1 = 74.0059
+lat2 = 41.8781
+long2 = 87.6298
+
+v1 = lat_long_to_vector(rad(lat1), rad(long1))
+v2 = lat_long_to_vector(rad(lat2), rad(long2))
+
+print(sphere_dist(v1, v2)) 
