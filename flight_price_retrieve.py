@@ -45,8 +45,7 @@ def get_flight_prices(num):
 	data = json.loads(r.text)
 	prices = []
 	for quote in data["Quotes"]:
-		time_data = [num, quote["OutboundLeg"]["DepartureDate"][12:]]
-		prices.append([time_data, quote["MinPrice"]])
+		prices.append([num, quote["MinPrice"]])
 	return prices
 	
 price_list = []
