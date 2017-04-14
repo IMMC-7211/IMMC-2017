@@ -6,7 +6,6 @@ import random
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from scipy.optimize import fsolve
-plt.style.use('ggplot')
 
 delta = 20
 omega = 1.4 * delta
@@ -117,10 +116,18 @@ def graph(list1,list2, list3, list4):
         pt.draw(win)
     pause = win.getMouse()
     win.close()
+	
+def new_graph(list1, list2, list3, list4):
+	plt.plot(range(len(list1)), list1, color="red")
+	plt.plot(range(len(list2)), list2, color="green")
+	plt.plot(range(len(list3)), list3, color="blue")
+	plt.plot(range(len(list4)), list4, color="purple")
+	plt.title("We are exceedingly dank.")
+	plt.show()
 
         
 yvals1=start(-math.pi*3/12)
 yvals2=start(-math.pi*6/12)
 yvals3 = start(-math.pi*9/12)
 yvals4 = start(-math.pi*12/12)
-graph(yvals1, yvals2, yvals3, yvals4)
+new_graph(yvals1, yvals2, yvals3, yvals4)
