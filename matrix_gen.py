@@ -1,19 +1,14 @@
-import numpy as np
 import json
-from sklearn import kernel_ridge
-from sklearn import svm
-from sklearn import utils
-from sklearn import metrics
 import matplotlib.pyplot as plt
 
 f1 = open("LAXtoNRT.txt", "r") # LAX to NRT
-f2 = open("JFKtoLHR.txt", "r") # JFK to LHR
+#f2 = open("JFKtoLHR.txt", "r") # JFK to LHR
 
 data1 = json.loads(f1.read())
-data2 = json.loads(f2.read())
+#data2 = json.loads(f2.read())
 
 f1.close()
-f2.close()
+#f2.close()
 
 def mod_365(data):
 	for price in data:
@@ -43,48 +38,37 @@ def avg_val(data):
 				
 def split_val(data):
 	x = []
-	x2 = []
 	y = []
 	for price in data:
-		x.append([price[0]])
-		x2.append(price[0])
-		y.append(price[1])
-	return x, y
+		if not(price[0] < 133 and price[1] > 500):
+			x.append(price[0])
+			y.append(price[1])
+	return [x, y]
 
 data1 = mod_365(data1)
-data2 = mod_365(data2)	
+#data2 = mod_365(data2)	
 		
 avg_val(data1)
-avg_val(data2)
+#avg_val(data2)
+	
+def interp(data):
+	int_data = []
+	for x in range(365):
+		int_data.append([x, (440.83952879941756 - 0.9230346529037582*x + 0.012759488691416044*x**2 + 0.0030480935312014686*x**3 - 0.00011838651457851168*x**4 + 0.00000183290116609483*x**5 - 1.490920950571e-8*x**6 + 6.935176753e-11*x**7 - 1.8584496e-13*x**8 + 2.6731e-16*x**9 - 1.6e-19*x**10)])
+	return int_data
 
-x1, y1 = split_val(data1)
-x2, y2 = split_val(data2)
+int_data1 = interp(data1)
 
-x1arr, y1arr = np.array(x1), np.array(y1)
-x2arr, y2arr = np.array(x2), np.array(y2)
+print(int_data1)
 
-cut1 = int(x1arr.size * .75)
-cut2 = int(x2arr.size * .75)
-
-"""
-x1train, y1train = x1arr[:cut1], y1arr[:cut1]
-x2train, y2train = x2arr[:cut2], y2arr[:cut2]
-
-x1test, y1test = x1arr[cut1:], y1arr[cut1:]
-x2test, y2test = x2arr[cut2:], y2arr[cut2:]
-"""
-
-#svr1 = kernel_ridge.KernelRidge(kernel="rbf")
-svr1 = svm.SVR(kernel="rbf")
-alg = svr1.fit(x1arr, y1arr).predict(x1arr)
-print(metrics.mean_squared_error(y1arr, alg))
-
-plt.scatter(x1arr, y1arr, color="darkorange", label="data")
-plt.plot(x1arr, alg, color="navy", label="RBF Model")
-plt.xlabel("days after Jan 1")
-plt.ylabel("avg price")
-plt.title("seasonal flight prices from LAX to NRT")
+plt.scatter(*split_val(data1), color="darkorange", label="LAX to NRT")
+#plt.plot(range(365), [1] * 365, color="orange", label="Mean")
+plt.plot(*split_val(int_data1), color="navy", label="LAX to NRT Regression")
+plt.xlabel("Days after Janurary 1 in a Year")
+plt.ylabel("Average Flight Cost (USD)")
+plt.title("Average Flight Cost from LAX to NRT vs. Days into the Year")
 plt.legend()
+plt.xlim([0, 363])
+plt.ylim([410, 610])
 plt.show()
-
 
