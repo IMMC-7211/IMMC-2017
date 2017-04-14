@@ -39,95 +39,57 @@ def randomly():
 
 
 def start(angle):
-    if (angle>0):
-        angle = math.pi - angle
-    else:
-        angle = -(math.pi + angle)
-    t = 0
-    dif=0
-    points = []
-    values = randomly()
-    magnitude_dif = 5
-    while (magnitude_dif>0.3):
-        holder = []
-        for item in values:
-            new = change(item, t, values, angle)
-            holder.append(new)
-        average_sum_x = 0
-        average_sum_y = 0
-        for element in holder:
-            exponent = element - (t * sigma) - angle
-            ang_to_calculate = exponent / math.pi 
-            average_sum_x += math.cos(ang_to_calculate)
-            average_sum_y += math.sin(ang_to_calculate)
-        average_x = average_sum_x / 100
-        average_y = average_sum_y / 100
-        z_dif_x = zst_real - average_x
-        z_dif_y = zst_imag - average_y
-        magnitude_dif = math.sqrt((z_dif_x)**2 + (z_dif_y)**2)
-        points.append(magnitude_dif)
-        print(magnitude_dif)
-        t += 0.01
-    return points
-
-
-def graph(list1,list2, list3, list4):
-    win = GraphWin('Graph', 1000, 1000)
-    win.setBackground('white')
-    pty1 = Point(50, 100)
-    pty2 = Point(50, 600)
-    ylabel1 = Text(Point(40,300), 1)
-    ylabel1.draw(win)
-    ylabel2 = Text(Point(40,100), 2)
-    ylabel2.draw(win)
-    xlabel1 = Text(Point(237.5,510), 8)
-    xlabel1.draw(win)
-    xlabel2 = Text(Point(475,510), 16)
-    xlabel2.draw(win)
-    xlabel3 = Text(Point(712.5,510), 24)
-    xlabel3.draw(win)
-    xlabel4 = Text(Point(900,510), 32)
-    xlabel4.draw(win)
-    yaxis = Line(pty1, pty2)
-    ptx1 = Point(50, 500)
-    ptx2 = Point(900, 500)
-    xaxis= Line(ptx1, ptx2)
-    xaxis.draw(win)
-    yaxis.draw(win)
-    ptq1 = Point(50,440)
-    ptq2 = Point(900,440)
-    linq = Line(ptq1, ptq2)
-    linq.draw(win)
-    for y in list1:
-        pt = Point(50+(list1.index(y)+1)/3,500-y*200)
-        pt.setFill('red')
-        pt.draw(win)
-    for y in list2:
-        pt = Point(50+(list2.index(y)+1)/3,500-y*200)
-        pt.setFill('green')
-        pt.draw(win)
-    for y in list3:
-        pt = Point(50+(list3.index(y)+1)/3,500-y*200)
-        pt.setFill('blue')
-        pt.draw(win)
-    for y in list4:
-        pt = Point(50+(list4.index(y)+1)/3,500-y*200)
-        pt.setFill('purple')
-        pt.draw(win)
-    pause = win.getMouse()
-    win.close()
-	
-def new_graph(list1, list2, list3, list4):
-	plt.plot(range(len(list1)), list1, color="red")
-	plt.plot(range(len(list2)), list2, color="green")
-	plt.plot(range(len(list3)), list3, color="blue")
-	plt.plot(range(len(list4)), list4, color="purple")
-	plt.title("We are exceedingly dank.")
-	plt.show()
-
+	if (angle>0):
+		angle = math.pi - angle
+	else:
+		angle = -(math.pi + angle)
+	t = 0
+	dif = 0
+	t_tb = []
+	points = []
+	values = randomly()
+	magnitude_dif = 5
+	while (magnitude_dif>0.25):
+		holder = []
+		for item in values:
+			new = change(item, t, values, angle)
+			holder.append(new)
+		average_sum_x = 0
+		average_sum_y = 0
+		for element in holder:
+			exponent = element - (t * sigma) - angle
+			ang_to_calculate = exponent / math.pi 
+			average_sum_x += math.cos(ang_to_calculate)
+			average_sum_y += math.sin(ang_to_calculate)
+		average_x = average_sum_x / 100
+		average_y = average_sum_y / 100
+		z_dif_x = zst_real - average_x
+		z_dif_y = zst_imag - average_y
+		magnitude_dif = math.sqrt((z_dif_x)**2 + (z_dif_y)**2)
+		points.append(magnitude_dif)
+		t_tb.append(t)
+		print(magnitude_dif)
+		t += 0.01
+	return t_tb, points
         
-yvals1=start(-math.pi*3/12)
-yvals2=start(-math.pi*6/12)
-yvals3 = start(-math.pi*9/12)
-yvals4 = start(-math.pi*12/12)
-new_graph(yvals1, yvals2, yvals3, yvals4)
+t1, list1=start(math.pi*3/12)
+t2, list2=start(math.pi*6/12)
+t3, list3 = start(math.pi*9/12)
+t4, list4=start(math.pi*-3/12)
+t5, list5=start(math.pi*-6/12)
+t6, list6 = start(math.pi*-9/12)
+t7, list7 = start(math.pi*12/12)
+plt.plot(t1, list1, color="red", label="+3hrs")
+plt.plot(t2, list2, color="orange", label="+6hrs")
+plt.plot(t3, list3, color="yellow", label="+9hrs")
+plt.plot(t4, list4, color="green", label="-3hrs")
+plt.plot(t5, list5, color="blue", label="-6hrs")
+plt.plot(t6, list6, color="indigo", label="-9hrs")
+plt.plot(t7, list7, color="purple", label="+-12hrs")
+plt.title("Jet Lag")
+plt.xlabel("t (minutes)")
+plt.ylabel("R(t) - R_st (magnitude)")
+plt.xlim(xmin=0)
+plt.ylim(ymin=.25)
+plt.legend()
+plt.show()
