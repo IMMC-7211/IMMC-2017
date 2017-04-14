@@ -1,0 +1,13 @@
+\contentsline {section}{\numberline {1}Problem and Interpretation}{5}
+\contentsline {section}{\numberline {2}Assumptions}{6}
+\contentsline {section}{\numberline {3}Model}{7}
+\contentsline {subsection}{\numberline {3.1}Jetlag}{7}
+\contentsline {subsection}{\numberline {3.2}Spherical Distance}{8}
+\contentsline {subsection}{\numberline {3.3}Cost}{8}
+\contentsline {section}{\numberline {4}Model Implementation}{9}
+\contentsline {subsection}{\numberline {4.1}Kuramoto Model}{9}
+\contentsline {section}{\numberline {5}Model Results}{10}
+\contentsline {section}{\numberline {6}Model Discussion}{11}
+\contentsline {section}{\numberline {7}Model Strengths and Weaknesses}{12}
+\contentsline {section}{\numberline {8}Code Analysis}{13}
+\contentsline {section}{\numberline {9}Appendix}{14}
