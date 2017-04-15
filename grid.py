@@ -76,8 +76,6 @@ grid = create_grid(coords)
 
 fit = []
 
-cache = {}
-
 for coord1 in grid:
 	min_cost = 10000000
 	max_cost = 0
@@ -86,18 +84,12 @@ for coord1 in grid:
 		c = cost(coord1, coord2, t)
 		min_cost = min(min_cost, c)
 		max_cost = max(max_cost, c)
-		long_dif = rad(coord1[1]) - rad(coord2[1])
-		if abs(long_dif) > math.pi:
-			long_dif = (2*math.pi - abs(long_dif)) * -(long_dif)/abs(long_dif)
-		jl = None
-		for dif in cache.keys():
-			if abs(dif - long_dif) < .025:
-				jl = cache[dif]
-		if jl == None:
-			jl = abs(start(long_dif))
-			cache[long_dif] = jl
+		x = rad(coord1[1]) - rad(coord2[1])
+		if abs(x) > math.pi:
+			x = (2*math.pi - abs(x)) * -x/abs(x)
+		jl = -0.0014*x**6 - 0.0002*x**5 + 0.0264*x**4 + 0.0022*x**3 - 0.2153*x**2 - 0.0074*x + 0.8368
 		d = 1 - distance(coord1, coord2)
-		print(c, long_dif, jl, d)
+		print(c, x, jl, d)
 		fitnesses.append([coord2, jl, d, c])
 	final_fitness = 0
 	for f in fitnesses:

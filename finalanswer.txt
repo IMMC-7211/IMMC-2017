@@ -1,0 +1,5 @@
+Scenario 1
+52.1863724, 93.1053239 - Kyzyl Airport, Kyzyl, Russia
+
+Scenario 2
+52.1863724, 73.9411199 - Astana International Airport, Astana, Kazakhstan
