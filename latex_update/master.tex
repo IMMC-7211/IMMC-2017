@@ -1,0 +1,48 @@
+\documentclass[letterpaper]{article}
+\usepackage{graphicx}
+\usepackage[ruled]{algorithm2e}
+\usepackage{tocloft}
+\usepacakge{amssymb}
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{mathdots}
+\usepackage[centering, textwidth=5.27in, top=1.5in]{geometry}
+\renewcommand{\baselinestretch}{1.25}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Page \thepage \ of \pageref{LastPage}}
+\lhead{US-7211}
+
+\title{Fuck y'all Shitingtons}
+\author{Bert Cao, Nathanael Kim, Suchet Kumar, Tommy Vadakumchery}
+
+\begin{document}
+	\begin{center}
+		\includegraphics[width=\textwidth]{teamlogo.eps}
+	\end{center}
+		Hello! This is a test. This is meant to see if the line breaks will properly work. Test. Test. Does this shit work? Test, test, does this shit work?
+	\newpage
+	\begin{center}
+		\includegraphics[width=0.55\textwidth]{logo2.eps}
+		\includegraphics[width=0.65\textwidth]{love.eps}
+	\end{center}
+
+	\maketitle
+
+	\newpage
+	\tableofcontents
+	\newpage
+
+	\include{problem}
+	\include{assumptions}
+	\include{model}
+	\include{results}
+	\include{discussion}
+	\include{strengths}
+	\include{code}
+	\include{appendix}
+\end{document}
