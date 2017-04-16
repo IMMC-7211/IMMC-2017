@@ -1,0 +1,45 @@
+\documentclass[letterpaper]{article}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage[ruled]{algorithm2e}
+\usepackage{tocloft}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{mathdots}
+\usepackage[centering, textwidth=5.27in, top=1.5in]{geometry}
+\renewcommand{\baselinestretch}{1.25}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Page \thepage \ of \pageref{LastPage}}
+\lhead{US-7211}
+
+\title{Fuck y'all Shitingtons}
+\author{Bert Cao, Nathanael Kim, Suchet Kumar, Tommy Vadakumchery}
+
+\begin{document}
+	\begin{center}
+		\centerline{\includegraphics[width=1.25\textwidth]{summary.eps}}
+	\end{center}
+		\input{problem}
+	\newpage
+	\begin{center}
+		\includegraphics[width=0.65\textwidth]{love.eps}
+		\includegraphics[width=0.55\textwidth]{logo2.eps}
+	\end{center}
+
+
+	\newpage
+	\tableofcontents
+	\newpage
+
+	\include{assumptions}
+	\include{model}
+	\include{results}
+	\include{discussion}
+	\include{bib}
+	\include{appendix}
+\end{document}

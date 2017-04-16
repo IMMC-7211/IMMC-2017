@@ -1,0 +1,275 @@
+\section{Model}
+Given an input of the time of year and locations of participants, we used Google Maps API to convert city names to coordinates and created a grid of (lattitude, longitude) non-nautical coordinates using extrema points. Each point in the grid was evaluated and given a fitness rating for each participant. This rating was calculated by weighing jetlag, distance, and cost fitness. All the point's fitness values were averaged to find its overall fitness value. The point with the highest overall fitness was chosen for the meeting location.
+
+\subsection{Jetlag}
+The suprachiasmatic nucleus (SCN) is a region of the mammalian hypothalamus that contains around 10,000 neurons. The firing of vasoactive intestinal polypeptide in the neurons of SCN indicates rhythm of the ``body clock''. Thus, it is responsible for circadian rhythms, which cyclically control sleep, physical activity, alertness, hormone levels, body temperature, immune function, and digestive activity. These factors contribute to productivity and mood, and therefore, it is essential for the neurons of SCN to be in synchrony with environmental conditions of the time zone. Because circadian rhythm is cyclic, we can model neurons in the SCN with individual oscillators.
+
+A reputable dynamical system for modeling multiple oscillators is the Kuramoto Model, given by
+$$\dot{\theta_i} = \omega_i + \frac{K}{N} \sum_{j=1}^ {N}(\sin{\theta_j - \theta_i}) + \zeta_i$$
+
+where each $\theta_i$ is an oscillator, and $\omega_i$ is the natural frequency of oscillator $\theta_i$. Average $\omega_i$ is $\frac{2 \pi}{24}$ and each $\omega_j$ is generated using a random Cauchy distribution centered on $\omega = \frac{2 \pi}{24}$. Although each oscillator has its own natural frequency, over time, all oscillators tend to approach the same frequency, $\frac{K}{N} \sum_{j=1}^N(\sin (\theta_j -\theta_i))$. The constant $K$ is known as coupling strength. As $K$ increases, the oscillators more readily tend towards a uniform frequency. At the initialization of the system, note that $\theta_j = \theta_i$, and $\sin(\theta_j - \theta_i) = 0$. The coupling strength is quite weak at initialization, but it grows stronger as $t$ increases. At initialization, $\zeta_i$ and $\omega_i$ have the largest influence on the frequency of the system. $\zeta_i$ is simply a noise function. In this model, the noise function accounted for the change in daylight due to geographic change. 
+$$\zeta_i = F \sin(\theta_i - \sigma t - \Delta(p))$$ 
+
+where $\Delta(p)$ is the radial longitudinal difference in position after travel and $\frac{2\pi}{\sigma}$ was the daylight period in the new location. 
+If $\Delta(p)$ is a negative value, we see that $\zeta_1$ has a more significant effect in phase offset. This subtlety results in significant differences between eastward and westward jet lag. 
+We can use
+$$R = \frac{1}{N} \sum_{j=1}^N (e^{\theta_j - \sigma t - \Delta(p)})$$
+
+to model the average value of all $\theta_i$. Childs and Strogatz showed that $\frac{\mathrm{d} R}{\mathrm{d} t}$ is 
+$$\dot{R} = \frac{(KR + F) - R^2(\overline{KR + F})}{2} - (\Delta + i\Omega)R$$
+Where $F, \Delta, \Omega$ are constants---due to the research of Lu et al---we selected as 
+$$\delta = 20$$
+$$\Omega = 1.4 \delta$$
+$$K = 4.5 \delta$$
+$$f = 3.5 \delta$$
+for a normal human.
+The stability point of $\dot{R}$ is $R_{sp}$.
+At $R_{sp}$, the coupling factor has ``cancelled out'' the noise function, and the participant feels no jet lag. This is the point that $\dot{R}$ and $\theta_i$ tend towards.
+Since $R_{sp}$ is the point of no jet lag, we quantify the amount of jetlag at point $t$ as $|R - R_{sp}|$
+So, at initialization, the starting points of $\theta_i$ are:
+$$R_{sp} \cdot \mathrm{rotation}$$
+In this case, the rotation aroound the origin corresponds to the radian measure of longitudinal $\Delta(p)$ that the participant travels. 
+This model's algorithm can be found in subsection 4.1.
+\subsection{Spherical Distance}
+We know
+$$\vec{v_1} \cdot \vec{v_2} = \|\vec{v_1}\| \|\vec{v_2}\| \cos(\theta)$$
+where $\theta$ is the angle in between the two vectors, also the distance between two points on a unit sphere. We use this to find spherical distance between points. Given longitude and lattitude, we convert coordinates to unit vectors using the formulas:
+$$x = \cos(\mathrm{lat}) \cdot \cos(\mathrm{long})$$
+$$y = \cos(\mathrm{lat}) \cdot \cos(\mathrm{long})$$
+$$z = \sin(\mathrm{lat})$$
+We then get:
+
+$$\vec{v_1} \cdot \vec{v_2} = 1 \cdot 1 \cdot \cos(\theta)$$
+$$\arccos({\vec{v_1} \cdot \vec{v_2}}) = \arccos(\cos(\theta))$$
+$$\theta = \arccos(\vec{v_1} \cdot \vec{v_2})$$
+We then multiply this by the Earth's circumference and divide by $2 \pi$ to find distance on Earth's surface.
+
+\subsection{Cost}
+We also consider cost. To determine cost function, we analyze flight data from Los Angeles LAX to Tokyo NRT using SkyScanner's API. Data include date of departure and cost. We used this data to determine a function of cost in terms of departure date. Regression calculation procedure is described in 3.3.1-3.3.3.
+
+
+
+
+As average air fare depends on season, we consider cost based on time of year. We analyzed international flight data from LAX to Tokyo NRT, which include time of departure and date. We used this information to regress a polynomial $f(t)$, where $t$ is departure date. Mean cost was interpreted as
+$$m(t) = \frac{1}{365} \int_1^{365}f(t) \mathrm{d} t $$. 
+
+
+To estimate mean cost based on distance, we use 1,780,832 price points from Rome2Rio.com. Airfare cost follows a linear graph with the equation $$C(x) = 50 + (x \cdot 0.11)$$ where C(x) is the cost in USD of flying $x$ miles. Then, $$C(d) = 50 + (d \cdot  0.177)$$ where C(d) is the cost in USD of flying $d$ kilometers. 
+We multiply our $f(t)$ by $c(d)$ to get a cost function based on flight distance and departure date, which we define as $C_m(d,t)$.
+
+\subsubsection{Multi-variable linear regression and Polynomial regression}
+The general hypothesis for a linear model of $n$ variables is
+$$h_{\theta}(x_0, x_1, x_2, \dots, x_n) = \theta_0 \cdot x_0 + \theta_1 \cdot x_1 + \theta_2 \cdot x_2 + \dots  \theta_n \cdot x_n$$
+We write all $\theta_i$ in a matrix:
+$$
+\theta = 
+\begin{bmatrix}
+\theta_0 & \theta_1 & \theta_2 & \dots & \theta_n 
+\end{bmatrix}
+\in \mathbb{R}
+$$
+and all $x_i$ in a matrix:
+$$
+x = 
+\begin{bmatrix}
+x_0 \\
+x_1 \\
+x_2 \\
+\vdots\\
+x_n
+\end{bmatrix}
+\in {\mathbb{R}}^{n+1}
+$$
+
+We write
+$$h(x_0, x_1, x_2, \dots, x_n) = \theta \cdot x \\
+= 
+\begin{bmatrix}
+\theta_0 & \theta_1 & \theta_2 & \dots & \theta_n 
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+x_0 \\
+x_1 \\
+x_2 \\
+\vdots\\
+x_n
+\end{bmatrix} 
+$$
+
+$$= \theta_0 \cdot x_0 + \theta_1 \cdot x_1 + \theta_2 \cdot x_2 + \dots + \theta_n \cdot x_n$$
+
+for $i$ input values we model input/output as the following:
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c|c|c|c| } 
+\hline
+$m$ & $x_0$ & $x_1$ & $x_2$ & $x_3$ & \dots & $x_n$ & y \\
+\hline
+1 & $x_0^{(1)}$ & $x_1^{(1)}$ & $x_2^{(1)}$ & $x_3^{(1)}$ & $\dots$ & $x_n^{(1)}$ & $y^{(1)}$\\ 
+2 & $x_0^{(2)}$ & $x_1^{(2)}$ & $x_2^{(2)}$ & $x_3^{(2)}$ & $\dots$ & $x_n^{(2)}$ & $y^{(2)}$\\ 
+3 & $x_0^{(3)}$ & $x_1^{(3)}$ & $x_2^{(3)}$ & $x_3^{(3)}$ & $\dots$ & $x_n^{(3)}$ & $y^{(3)}$\\ 
+$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ & $\vdots$\\ 
+m & $x_0^{(m)}$ & $x_1^{(m)}$ & $x_2^{(m)}$ & $x_3^{(m)}$ & \dots & $x_n^{(m)}$ & $y^{(m)}$\\ 
+\hline
+\end{tabular}
+\end{center} 
+
+Here, $x^{(0)}_m$ are the inputs of $\theta_m(x)$. For instance, 
+$$x^{(2)} =  
+\begin{bmatrix}
+x_0^{(2)} \\
+x_1^{(2)} \\
+x_2^{(2)} \\
+x_3^{(2)} \\
+\vdots \\
+x_n^{(2)}
+\end{bmatrix}
+\in \mathbb{R}^{n+1}
+$$
+
+We use average mean square difference for cost function of regression, which is given by
+$$j(\theta) = \frac{1}{2m} \sum_{i=1}^{m} (h_{\theta}(x^{(i)} - y^{(i)})^{2})$$
+
+
+\subsubsection{Gradient descent}
+We optimize the formula given above using gradient descent.
+The general algorithm for gradient descent is 
+$$\theta_i \coloneqq \theta_i - \alpha \frac{\partial}{\partial \theta_i}(j(\theta))$$
+where $j(\theta)$ is a cost function and $\alpha$ is the learning rate.
+For multiple variables, algorithm is simultaneously evaluated for all $\theta_i$. 
+For example, a ten variable equation would be evaluated using:
+$$\theta_0 \coloneqq \theta_0 - \alpha \frac{\partial}{\partial \theta_0}(j(\theta))$$
+$$\theta_1 \coloneqq \theta_1 - \alpha \frac{\partial}{\partial \theta_1}(j(\theta))$$
+$$\theta_2 \coloneqq \theta_2 - \alpha \frac{\partial}{\partial \theta_2}(j(\theta))$$
+$$\vdots$$
+$$\theta_{10} \coloneqq \theta_{10} - \alpha \frac{\partial}{\partial \theta_{10}}(j(\theta))$$
+When we substitute in $j(\theta)$, we get
+$$\theta_i \coloneqq \theta_{i} - \alpha \frac{\partial}{\partial \theta_i}(\frac{1}{2m} \sum_{i=1}^m (h_{\theta}(x^{(i)}) - y^{(i)})))$$
+which simplifies to
+$$\theta_j \coloneqq  \theta_j - \alpha \frac{1}{m} (h_{\theta}^{(i)} - y^{(i)}) \cdot x_j^{(i)}$$
+
+\subsubsection{Gradient descent in polynomial regression}
+We use the same input/output and algorithm in multi-variable linear regression, but we use 1 input and create more variables by increasing its power. The input would be as follows  
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c|c|c|c| } 
+\hline
+$m$ & $x^0$ & $x^1$ & $x^2$ & $x^3$ & \dots & $x^n$ & y \\
+\hline
+1 & $(x^{(1)})^0$ & $x^{(1)}$ & $(x^{(1)})^2$ & $(x^{(1)})^3$ & $\dots$ & $(x^{(1)})^n$ & $y^{(1)}$\\ 
+2 & $(x^{(2)})^0$ & $x^{(2)}$ & $(x^{(2)})^2$ & $(x^{(2)})^3$ & $\dots$ & $(x^{(2)})^n$ & $y^{(2)}$\\
+3 & $(x^{(3)})^0$ & $x^{(3)}$ & $(x^{(3)})^2$ & $(x^{(3)})^3$ & $\dots$ & $(x^{(3)})^n$ & $y^{(3)}$\\
+$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ & $\vdots$\\ 
+m & $(x^{(m)})^0$ & $x^{(m)}$ & $(x^{(m)})^2$ & $(x^{(m)})^3$ & \dots & $(x^{(m)})^n$ & $y^{(m)}$\\ 
+\hline
+\end{tabular}
+\end{center}
+The algorithm for this model is described in Section 4.2.
+
+
+\newpage
+
+
+\section{Model Implementation}
+\subsection{Kuramoto Model}
+We now find algorithm to implement model in Section 3.1. To find stability point of $R$, we solve zeroes of system $\dot{R}$, given by equation
+$$\dot{R} = \frac{(KR + F) - R^{2} (\overline{KR + F})}{2} - (\Delta + i\Omega)R$$
+Since starting values of $\theta_i$, which are $\theta_i(0)$ and are centered about $R_{sp} \cdot \mathrm{rotation} = R_{sp} \cdot e^{\Delta{p}}$, and $\frac{\mathrm{d} \theta_i}{\mathrm{d} t}$ are calculatable, we use Euler's method to find $\theta_i(0 + \mathrm{d}t)$. 
+The algorithm is as follows:
+\begin{center}
+\begin{algorithm}[h]
+\SetAlgoLined
+\SetKwInOut{Input}{input}
+\SetKwInOut{Output}{output}
+\SetKw{Calculate}{calculate}
+\SetKw{Set}{set}
+\SetKw{Return}{return}
+
+\Input{$R_{sp}$, $\mathrm{d} t$, $\Delta(p)$}
+ \Set{$t = 0$}\;
+ initialization\;
+ \Calculate{initial values of all $\theta_i$}\;
+ \Calculate{initial values of all $\omega_i$}\;
+ \While{$|R - R_{sp}|$ is decreasing}{
+  \
+  \For{each $\theta_i$}{
+   \Calculate{$\frac{\mathrm{d} \theta_i}{\mathrm{d} t}$}\;
+   
+  }
+ \Set{$\theta_i = \theta_i + \frac{\mathrm{d} \theta_i}{\mathrm{d} t} \cdot \mathrm{d} t$}\;
+ \Set{$t = t + \mathrm{d} t$}\;
+ \Calculate{new $R$}\;
+ \Calculate{$|R - R_{sp}|$}\;
+ }
+ \Return{$t \cdot \mathrm{d} t$}
+ \caption{Using Euler's method to find relative jetlag}
+\end{algorithm}
+\end{center}
+\subsection{Polynomial regression}
+As mentioned above, the cost function for multi-variable linear regression is
+$$j(\theta) = \frac{1}{2m} \sum_{i = 1}^{m} (h_{\theta}(x^{(i)} - y^{(i)})^2$$
+and its derivative is
+$$\frac{\partial}{\partial \theta_j} j(\theta) = \frac{1}{m} \sum_{i=1}^m (h(\theta^{(i)}) - y^{(i)})x_j^{(i)}$$
+Its algorithm is as follows:
+\newpage
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\caption{Gradient descent to optimize $n$-th degree polynomial regression and return polynomial}
+	\SetKwInOut{Input}{input}
+	\SetKw{Generate}{generate}
+	\SetKw{Calculate}{calculate}
+	\SetKw{Store}{store}
+	\SetKw{Update}{update}
+	
+	\Input{$x$, $y$, $\alpha$, $r$ = minimum $R^2$}
+	\Generate{$n+1$ random coefficients $\theta_i$ in $L_0$}\;
+	\While{$R^2 < r$}{
+		\Generate{empty list $L_1$ of coefficients}\;
+		\For{each coefficient $\theta$}{
+			$\Delta$ = 0\;
+			\For{each input $x$}{
+				\Calculate{predicted output $f(x)$}\;
+				$m$ =\Calculate{difference between $f(x)$ and y}\;
+				$\Delta$ = $\Delta + m$\;
+			}
+			New Coefficient = $\theta_i - \alpha \frac{1}{m} \Delta$\;
+			\Store{New Coefficient in $L_1$}\;	
+		}
+		$L_0 = L_1$\;
+	}
+	\Return{$L_0$}
+\end{algorithm}
+Note that the coefficients are not updated immediately after calculation, thus referred to as simultaneous gradient descent.
+
+\subsection{Location selection}
+Given an input of annual flight data and locations of participants, we select the optimal meeting point using this weighting---$20\% \cdot (\text{cost\ fitness}) + 20\%\cdot(\text{distance\ fitness}) + 60\%\cdot(\text{jetlag\ fitness})$.
+The algorithm is as follows:\\
+\begin{algorithm}[H]
+	\caption{Selecting optimal meeting point}
+	\SetKwInOut{Input}{input}
+	\SetKw{Generate}{generate}
+	\SetKw{Calculate}{calculate}
+	\SetKw{Store}{store}
+	\SetKw{Update}{update}
+	\SetKw{Algorithm}{Algorithm 1}
+	\SetKw{Allgorithm}{Algorithm 2}
+	\SetKw{Min}{min}
+	\SetKw{Max}{max}
+	\SetKw{Range}{range}
+	\SetKw{Check}{check}
+	\SetKw{Rank}{rank}
+
+	\Input{(Flight Dates, Flight Costs), locations, $\mathrm{d} t$, $K$, $F$, $\Delta$, $\Omega$}
+	$P(x)$ = \Allgorithm{(Flight Dates, Flight Costs)}\;
+	\For{lattitude \Range $\mathrm{(}\lfloor$\Min{(lattitudes)}$\rfloor$$,$ $\lfloor$\Max{(lattitudes)}$\rfloor, \mathrm{step}=5 \mathrm{)}$}{
+		\For{longitude \Range $\mathrm{(}\lfloor$\Min{(longitudes)}$\rfloor$$,$ $\lfloor$\Max{(longitudes)}$\rfloor, \mathrm{step}=5 \mathrm{)}$}{
+			\Check{Is (lattitude, longitude) water?}\;
+			Fitness = 0\;
+			\For{location}{
+				Fitness + ($0.6\ \cdot$ \Algorithm{} + $0.2 \cdot\ \frac{\mathrm{distance}}{2\pi}$ + $0.2\ \cdot P(d, t)$)
+			}
+			Fitness = $\frac{\mathrm{fitness}}{\mathrm{Count}(locations)}$\;
+			\Rank{(latitude, longitude)}
+		}
+	}
+	\Return{Top ten ranked (latitude, longitude)}
+\end{algorithm}

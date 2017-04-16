@@ -1,0 +1,43 @@
+\section{Model Discussion}
+As mentioned prior, our calculated results appear to be rather close to the ``average'' of all the locations. The model seems to have worked apparently well.
+
+
+\subsection{Kuramoto}
+Similarly to Lu et al's noise function, we ensured that eastward travel resulted in greater time needed for recovery than westward travel. Upon traveling west $n$ time zones, one would stay up $n$ hours longer than usual, but traveling east would require sleeping $n$ hours earlier. Logically speaking, staying up later is easier than sleeping earlier, and as mentioned before, we assume that participants do not take treatment for jet lag, including sleeping pills. The Kuramoto model was able to account for a large number of factors, such as the change in daylight, geographic location, and variance of circadian rhythms in different persons. 
+
+
+\subsubsection*{Kuramoto model weaknesses}
+If the values of the natural frequencies of neurons in the SCN, $\omega_i$, are not randomly generated, $\frac{\mathrm{d} \theta_i}{\mathrm{d} t}$ and $\theta_i(0)$ will be identical for all $i$, and our model will not work. Unfortunately, random chance is a significant factor in determining the final outcome, leading to inconsistent results. Additionally, the Kuramoto model does not account for travel time, but only recovery time. Thus, this had to be accounted for with another algorithm.
+
+
+\subsection{Gradient Descent for multi-dimensional regression}
+Although our team could have used the polynomial regressor in Microsoft Excel, we chose to create our own regression algorithm. Our algorithm enabled us to precisely control the fitting of the algorithm. In the case of flight cost data, which highly varies due to an extremity of variables in calculating ticket prices, a slight underfit is required. Thus, we terminated the gradient descent before its maximum convergence, leaving us with a polynomial regression with $R^2 = 0.68$. Another benefit of gradient descent of Excel polynomial regression is we can regress an unlimited number of degrees, while Excel allows for only up to 6. 
+
+
+\subsubsection*{Gradient Descent weaknesses}
+The largest issue with using gradient descent for regression rather than least square polynomials (as done by Microsoft Excel) is the agonizing amount of computation time our algorithm required, and this is time not readily available in real-world scenarios. Another issue is gradient descent's tendency to converge to local minima. Since the algorithm is
+$$\theta_i \coloneqq \theta_i - \alpha \frac{\partial}{\partial \theta_i}(j(\theta))$$
+It will stop updating when $\frac{\partial}{\partial \theta_i}(j(\theta)) = 0$, or at a local minima of the cost function. Convergence does not necessarily guarantee that our calculated regression is near the most optimal regression found at the global minima.
+
+
+\subsection{Grid brute force algorithm}
+Using the algorithms described and an input of cities, we created a grid of (latitude, longitude) coordinates which were spaced 5\degree apart. From these coordinates, we then removed all the coordinates in the ocean by posting get requests to Google Maps API for images of maps and analyzing the pixels for blue color. This algorithm was incredibly efficient. 
+
+
+\subsubsection*{Grid brute force algorithm weaknesses}
+The grid algorithm calculated fitness for points spaced in increments 5\degree . Unfortunately, this on average corresponds to 345 miles, which is an large interval. Coordinates with more optimal fitness values may exist, but our algorithm cannot find them. 
+
+
+Another weakness is its inability to detect islands. Coordinates nearby islands but in water will be excluded, as the majority of nearby pixels in a map would be blue. Unfortunately, this removes major islands such as parts of Japan, the Phillipines, and Hawaii from consideration. 
+
+
+Although these compromises may result in a loss of optimization, our team decided that they were worth the benefit of computational ease. This model may be used to serve impatient customers, and since the Google Maps API only provides a limited number of queries to a user per day, requests and computations must be minimized.
+
+\subsection{Conclusions and comments on the overall model}
+Unfortunately, our model could not account for variables such as weather, availability of flights, and the accessibility of infrastructure.  
+
+
+Nevertheless, the model was able to make a seemingly accurate prediction. The individual parts of the model accounted for variables the other parts could not cover. For instance, the distance algorithm accounts for the fact that the Kuramoto model assumes that travel time does not affect productivity. Our model, rather than account for only the recovery time for jet lag, also included ticket price and exhaustion due to long plane rides. Thus, it seeked to optimize the productivity of the participants, achieving a more advantageous objective.
+
+
+
