@@ -1,0 +1,78 @@
+Scenario 1 (participant city on left, answer city on right)
+Monterey to Kyzyl 2040.6749280924962
+Monterey to Altay 2161.8498683484177
+Monterey to Irkutsk 1955.3704318994762
+Monterey to Tacheng Prefecture 2215.177671204749
+Monterey to Ulan-Ude 1935.8025650381207
+Zutphen to Kyzyl 1228.7627327203054
+Zutphen to Altay 1208.6678351239466
+Zutphen to Irkutsk 1327.254461382814
+Zutphen to Tacheng Prefecture 1159.4131053263993
+Zutphen to Ulan-Ude 1368.6219739221601
+Melbourne to Kyzyl 2354.786637269856
+Melbourne to Altay 2347.3163796229273
+Melbourne to Irkutsk 2286.112554320387
+Melbourne to Tacheng Prefecture 2384.6806245949447
+Melbourne to Ulan-Ude 2253.519301824303
+Shanghai to Kyzyl 713.9057970732994
+Shanghai to Altay 754.5356232722504
+Shanghai to Irkutsk 622.3667899120817
+Shanghai to Tacheng Prefecture 823.7491902820911
+Shanghai to Ulan-Ude 587.0602069438133
+Hong Kong to Kyzyl 818.1529222176439
+Hong Kong to Altay 813.8360652646785
+Hong Kong to Irkutsk 767.8366098631539
+Hong Kong to Tacheng Prefecture 862.3305881292814
+Hong Kong to Ulan-Ude 745.4290406940156
+Moscow to Kyzyl 815.6671763656115
+Moscow to Altay 782.61557644415
+Moscow to Irkutsk 928.2777379955113
+Moscow to Tacheng Prefecture 730.2181154509666
+Moscow to Ulan-Ude 973.1635139177066
+
+Scenario 2
+Boston to Astana 1565.6499986199638
+Boston to Kokshetau 1519.1893285919898
+Boston to Kostanay 1487.389634784226
+Boston to Balkhash 1664.7351143772928
+Boston to Zhezqazgan 1599.480996779962
+Singapore to Astana 1111.9415356854702
+Singapore to Kokshetau 1157.781644952457
+Singapore to Kostanay 1201.8518787202545
+Singapore to Balkhash 1017.3889833644462
+Singapore to Zhezqazgan 1096.525934605919
+Beijing to Astana 663.2334481136755
+Beijing to Kokshetau 688.9805783545171
+Beijing to Kostanay 753.6284084131806
+Beijing to Balkhash 628.3003915234439
+Beijing to Zhezqazgan 711.0270123389655
+Hong Kong to Astana 866.3859310084686
+Hong Kong to Kokshetau 904.7098891061158
+Hong Kong to Kostanay 964.278515342119
+Hong Kong to Balkhash 795.8509939475477
+Hong Kong to Zhezqazgan 886.1402168520365
+Moscow to Astana 431.07014359708234
+Moscow to Kokshetau 393.4080951385202
+Moscow to Kostanay 333.15227401702884
+Moscow to Balkhash 510.0871888670291
+Moscow to Zhezqazgan 423.3574017546593
+Utrecht to Astana 792.4007701145345
+Utrecht to Kokshetau 753.2549251412103
+Utrecht to Kostanay 694.5508834615492
+Utrecht to Balkhash 871.242055150588
+Utrecht to Zhezqazgan 783.286058844929
+Warsaw to Astana 622.3487984863152
+Warsaw to Kokshetau 586.3981229064916
+Warsaw to Kostanay 524.7349133038744
+Warsaw to Balkhash 695.4767690151448
+Warsaw to Zhezqazgan 606.2639695232007
+Copenhagen to Astana 691.0309267013205
+Copenhagen to Kokshetau 650.7465804728031
+Copenhagen to Kostanay 593.5127773388286
+Copenhagen to Balkhash 772.9756122431286
+Copenhagen to Zhezqazgan 686.463133582551
+Melbourne to Astana 2104.0323131100226
+Melbourne to Kokshetau 2146.56062026291
+Melbourne to Kostanay 2200.3547490445108
+Melbourne to Balkhash 2018.6245769098666
+Melbourne to Zhezqazgan 2104.4479513379333

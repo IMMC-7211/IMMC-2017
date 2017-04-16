@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from scipy.optimize import fsolve
 
-delta = 20
+delta = 3.8e-3
 omega = 1.4 * delta
 k = 4.5 * delta
 f = 3.5 * delta
@@ -27,29 +27,30 @@ def second_part(theta, distance, t):
     return ans
 
 def change(previous_theta, time, thetas, distance):
-    total = omega + weight_summat(thetas, previous_theta) + second_part(previous_theta, distance, time)
+    total = omega + k/100 * weight_summat(thetas, previous_theta) + second_part(previous_theta, distance, time)
     new_theta = previous_theta + (dt * total) 
     return new_theta
 
-def randomly():
-    export = []
-    for i in range(1, 100):
-        export.append(math.pi+np.random.standard_cauchy())
-    return export
+def randomly(angle):
+	export = []
+	for i in range(1, 100):
+		ang_real = math.cos(angle)
+		ang_imag = math.sin(angle)
+		new_real = ang_real * zst_real - ang_imag * zst_imag
+		new_imag = ang_imag * zst_real + ang_real * zst_imag
+		new_ang = math.atan(new_imag/new_real)
+		export.append(new_ang+(random.random()-.5)*0.1)
+	return export
 
 
 def start(angle):
-	if (angle>0):
-		angle = math.pi - angle
-	else:
-		angle = -(math.pi + angle)
 	t = 0
 	dif = 0
 	t_tb = []
 	points = []
-	values = randomly()
+	values = randomly(angle)
 	magnitude_dif = 5
-	while (magnitude_dif>0.25):
+	while (magnitude_dif>0.3):
 		holder = []
 		for item in values:
 			new = change(item, t, values, angle)
@@ -78,18 +79,16 @@ t3, list3 = start(math.pi*9/12)
 t4, list4=start(math.pi*-3/12)
 t5, list5=start(math.pi*-6/12)
 t6, list6 = start(math.pi*-9/12)
-t7, list7 = start(math.pi*12/12)
 plt.plot(t1, list1, color="red", label="+3hrs")
 plt.plot(t2, list2, color="orange", label="+6hrs")
 plt.plot(t3, list3, color="yellow", label="+9hrs")
 plt.plot(t4, list4, color="green", label="-3hrs")
 plt.plot(t5, list5, color="blue", label="-6hrs")
 plt.plot(t6, list6, color="indigo", label="-9hrs")
-plt.plot(t7, list7, color="purple", label="+-12hrs")
 plt.title("Jet Lag")
-plt.xlabel("t (minutes)")
+plt.xlabel("Relative Time")
 plt.ylabel("R(t) - R_st (magnitude)")
 plt.xlim(xmin=0)
-plt.ylim(ymin=.25)
+plt.ylim(ymin=.3)
 plt.legend()
 plt.show()

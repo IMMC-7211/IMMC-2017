@@ -1,5 +1,19 @@
 Scenario 1
 52.1863724, 93.1053239 - Kyzyl Airport, Kyzyl, Russia
+52.1863724, 88.1053239
+52.1863724, 98.1053239
+47.1863724, 88.1053239 - Altay Airport, Altay, Xinjiang, China
+52.1863724, 103.1053239 - International Airport Irkutsk, Irkutsk, Russia
+47.1863724, 93.1053239
+52.1863724, 83.1053239
+47.1863724, 83.1053239 - Tacheng Airport, Tacheng Prefecture, China
+52.1863724, 108.1053239 - Baikal International Airport, Ulan-Ude, Russia
 
 Scenario 2
 52.1863724, 73.9411199 - Astana International Airport, Astana, Kazakhstan
+52.1863724, 68.9411199 - Kokshetau Airport, Kokshetau, Kazakhstan
+52.1863724, 78.9411199
+52.1863724, 63.9411199 - Kostanay Airport, Kostanay, Kazakhstan
+47.1863724, 73.9411199 - Balkhash Airport, Balkhash, Kazakhstan
+47.1863724, 78.9411199 - 
+47.1863724, 68.9411199 - Zhezhazgan Airport, Zhezqazgan, Kazakhstan
